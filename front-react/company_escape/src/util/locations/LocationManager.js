@@ -11,7 +11,6 @@ let serviceInterval = (callback)=>{
     }, 1000 * 5);    
 }
 
-
 export function restoreLocationService(successFunc,errorFunc){
     let cycleCount = 0 ;
     let _fu = ()=>{}

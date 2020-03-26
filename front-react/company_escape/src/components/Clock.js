@@ -1,17 +1,18 @@
 import React , { useState , useEffect } from "react";
-const moment = require('moment')
+import { runDateTimeThread } from "../util/dateTimes/DateTimeThread";
+import { devConsole } from "../util/Util";
+
 
 export function Clock(){
 
-    let [ dateTime , setDateTime ] = useState();
-    let [ date , time ] = ['', ''];
+    let [ dateTime , setDateTime ] = useState({date : '0' , time : '0'});
 
-    let date_interval = () => setInterval(()=>{
-
-        let fullDate = moment().format('YYYY-MM-DD$$$hh:mm:ss');
-        setDateTime(fullDate);
-        console.log('call Interval');
-    }, 1000);
+    let date_interval = () => {
+        runDateTimeThread((date)=>{
+            devConsole(date);
+            setDateTime(date);
+        });
+    }
 
     // 라이프 사이클 
     useEffect( () =>{
@@ -20,19 +21,14 @@ export function Clock(){
             window.removeEventListener("load", date_interval);
         };
     },[]);
-
-    if(dateTime){
-        [ date , time ] = dateTime?.split('$$$');
-    }
-
     
     return (
         <div>
             <p>
-                {date}  
+                {dateTime.date}  
             </p>
             <p>
-                {time}
+                {dateTime.time}
             </p>
             
         </div>
