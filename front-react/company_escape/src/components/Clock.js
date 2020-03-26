@@ -32,7 +32,7 @@ export function Clock(){
                 {date}  
             </p>
             <p>
-            {time}
+                {time}
             </p>
             
         </div>

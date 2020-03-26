@@ -13,9 +13,7 @@
     "react-dom": "^16.13.1",
     "react-geolocated": "^3.0.1",
     "react-scripts": "3.4.1",
-    "react-xml-parser": "^1.1.6",
-    "xml-js": "^1.6.11",
-    "xml2json": "^0.12.0"
+    "xml-js": "^1.6.11"
   },
   "scripts": {
     "start": "set HTTPS=true&&react-scripts start",
@@ -37,5 +35,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "proxy": "http://localhost:4000"
 }
