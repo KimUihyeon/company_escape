@@ -7,15 +7,33 @@ import { geolocated } from "react-geolocated";
 import { PositionTest } from './components/PositionTest';
 import { axiosUtil }  from './util/AxiosUtil';
 
-import  { locationTest } from './util/LocationTest';
+import  { restoreLocationService , startLocationService } from './util/locations/LocationManager';
+import { devConsole } from './util/Util';
 var convert = require('xml-js');
 
 
 dotenv.config();
 
 function App() {  
+  let callBack = (position)=>{
+      let currentLat = position.coords.latitude;
+      let currentLng = position.coords.longitude;
+      let data = {
+        currentLat,
+        currentLng
+      }
 
-  locationTest();
+
+      devConsole(JSON.stringify(data));
+  };
+
+  let failCallBack = ()=>{
+      alert('연결에 실패하였습니다.');
+  }
+
+  startLocationService(callBack, failCallBack);
+
+  //locationTest();
   
 
 

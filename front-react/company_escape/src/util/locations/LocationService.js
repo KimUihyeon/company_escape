@@ -1,23 +1,10 @@
-export const aa = '';
-export function locationTest (){
-    getLocation(function(position) {
-        //do something cool with position
-        let currentLat = position.coords.latitude;
-        let currentLng = position.coords.longitude;
 
-        let data = {
-            currentLat, currentLng
-        }
-
-        alert(JSON.stringify(data));
-    });
-}
-
+import { devConsole , devAlert } from '../Util';
 
 var GPSTimeout = 10; //init global var NOTE: I noticed that 10 gives me the quickest result but play around with this number to your own liking
 
 //function to be called where you want the location with the callback(position)
-function getLocation(callback) {
+export function getLocation(callback) {
   if (navigator.geolocation) {
     var clickedTime = (new Date()).getTime(); //get the current time
     GPSTimeout = 10; //reset the timeout just in case you call it more then once
@@ -43,8 +30,9 @@ function ensurePosition(callback, timestamp) {
           ensurePosition(callback, timestamp); //call itself to refresh
         }
       },
-      function() //error: gps failed so we will try again
+      function(err) //error: gps failed so we will try again
       {
+        devConsole(err.message);
         GPSTimeout += GPSTimeout; //increase the timeout by itself n*2
         ensurePosition(callback, timestamp); //call itself to try again
       }, {
