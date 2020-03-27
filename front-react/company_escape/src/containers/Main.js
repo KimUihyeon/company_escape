@@ -14,6 +14,8 @@ const mainProps = {
 
 function Main (mainProps){
 
+    console.log('왜 두번튐??')
+    
     let date_interval = () => {
         runDateTimeThread((date)=>{
             console.log(date);
