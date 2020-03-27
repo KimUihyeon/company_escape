@@ -1,5 +1,7 @@
 package com.company.escape.util.rest;
 
+import com.company.escape.util.serialize.SerializeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
@@ -9,7 +11,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
 
@@ -22,6 +31,9 @@ import java.util.*;
 
 @Component
 public class RestRequester {
+
+    @Autowired
+    private SerializeUtil serializeUtil;
 
     /**
      * URL 뒤에 붙는 쿼리스트링을 만들어
@@ -61,21 +73,52 @@ public class RestRequester {
     }
 
 
+    public void requestRestFulOldCode(){
+
+//        String uri = getUrl(url, paramMap);
+
+//
+//        RestTemplate rest = new RestTemplate();
+//        HttpHeaders header = new HttpHeaders();
+//        header.setContentType(new MediaType("application","json"));
+//        return rest.exchange(uri.toUriString(), HttpMethod.GET,new HttpEntity<>(header), String.class);
+
+    }
+
     /**
      * 실제 REST API를 요청함..
      *
-     * @param url
-     * @param paramMap
+     * @param uri
      * @return
      */
-    public Object requestRestFul(String url, Map<String, String> paramMap) {
+    public String requestRestFul(UriComponents uri) {
+        String ResponceData = null;
+        try{
 
-        String uri = getUrl(url, paramMap);
+            URL url = new URL(uri.toUriString());
 
-        RestTemplate rest = new RestTemplate();
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(new MediaType("application", "xml", Charset.forName("utf-8")));
-        return rest.exchange(uri, HttpMethod.GET, new HttpEntity<>(header), String.class);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-type", "application/json");
+
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String line;
+
+                StringBuilder sb = new StringBuilder();
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + System.lineSeparator());
+                }
+
+                ResponceData = sb.toString();
+                System.out.println(sb.toString());
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return ResponceData;
     }
 
 
