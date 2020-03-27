@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
  * @since 2020.03.27
  */
 @Service("testService")
-public class TestService {
+public class HelloService {
 
     public void test(){
 
