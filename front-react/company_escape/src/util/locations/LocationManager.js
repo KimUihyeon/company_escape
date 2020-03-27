@@ -3,9 +3,15 @@ import { devConsole } from '../Util';
 
 let serviceRunning = false;
 
+static let isAutoSearch = true;
+
 
 let serviceInterval = (callback)=>{
     setInterval(()=>{
+        if(isAutoSearch === false ){
+            serviceRunning = false;
+            return ;
+        }
         getLocation(callback);
         serviceRunning = true;
     }, 1000 * 5);    

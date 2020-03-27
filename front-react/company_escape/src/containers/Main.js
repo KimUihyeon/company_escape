@@ -35,6 +35,12 @@ function Main (mainProps){
         <div>
             <button onClick={mainProps.handleClick}>날짜 재계산하기</button>
             <p>
+                현재위치 : 회사 ( 회사 | 정자역 | 8106 버스 | 시흥환승센터 | 3200버스 | 시흥  )
+
+                위치검색 자동유무 (자동 , 수동 )
+
+            </p>
+            <p>
                 {mainProps.time}
             </p>
         </div>
