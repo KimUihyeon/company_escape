@@ -6,15 +6,27 @@ import { Clock } from './components/Clock';
 import { geolocated } from "react-geolocated";
 import { PositionTest } from './components/PositionTest';
 import { axiosUtil }  from './util/AxiosUtil';
-
 import  { restoreLocationService , startLocationService } from './util/locations/LocationManager';
+import { location } from "./util/locations/LocationUtil";
 import { devConsole } from './util/Util';
+import Main from './containers/Main'
 var convert = require('xml-js');
-
 
 dotenv.config();
 
 function App() {  
+
+  let datas = [
+    {x : 10 , y :11 },
+    {x : 10 , y :0 },
+    {x : 0 , y :0 },
+    {x : 0 , y :11 },
+  ]
+
+  let current = { x: 3 , y:  7};
+
+  console.log(location.contains(datas,current));
+
   let callBack = (position)=>{
       let currentLat = position.coords.latitude;
       let currentLng = position.coords.longitude;
@@ -28,15 +40,10 @@ function App() {
   };
 
   let failCallBack = ()=>{
-      alert('연결에 실패하였습니다.');
+      alert(process.env.RAECT_APP_LOCATION_SERVICE_FAIL);
   }
 
   startLocationService(callBack, failCallBack);
-
-  //locationTest();
-  
-
-
 
 
   // let [ postion , setPosition] = useState();
@@ -88,6 +95,7 @@ function App() {
           Learn React
         </a>
       </header>
+      <Main></Main>
     </div>
   );
 }

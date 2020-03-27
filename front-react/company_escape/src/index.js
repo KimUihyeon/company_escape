@@ -3,11 +3,28 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { createStore }  from 'redux'
+import { Provider } from 'react-redux'
+import { reducers } from "./reducers";
+
+
+
+const store = createStore(reducers);
+store.subscribe(()=>{ console.log(store.getState())});
+
+
+const rootComponenet = (
+  <Provider store={store}>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </Provider>
+
+)
+
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  rootComponenet,
   document.getElementById('root')
 );
 

@@ -12,9 +12,6 @@ function getUrl( param ){
 
 
 class AxiosUtil {
-
-    
-
     
     get(url){
         return axios.get(url);
