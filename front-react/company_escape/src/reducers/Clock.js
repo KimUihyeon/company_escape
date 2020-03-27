@@ -1,7 +1,7 @@
 import * as actionTypes from '../actions/ActionTypes';
 
 const initialState = { 
-
+    dateTime : ''
 }
 
 
@@ -11,7 +11,8 @@ export const clock = (state = initialState , action) =>{
         case actionTypes.CLOCK_UPDATE : {
             return {
                 ...state,
-                dateTime : action.dateTime,
+                date : action.date,
+                time : action.time
             }
         }
         default : {

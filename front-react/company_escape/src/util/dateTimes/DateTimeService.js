@@ -1,7 +1,7 @@
 const moment = require('moment');
 const stringSplitor = '$$$';
 
-function getDate(){
+export function getNowDate(){
     let momentDate = moment().format(`YYYY-MM-DD${stringSplitor}hh:mm:ss`);
     let [date , time] = momentDate.split(stringSplitor);
 
@@ -13,8 +13,8 @@ function getDate(){
 }
 
 export function runDateTimeThread(callback){
-    callback(getDate());
+    callback(getNowDate());
     setInterval(()=>{
-        callback(getDate());
+        callback(getNowDate());
     }, 1000);
 }
