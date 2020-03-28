@@ -46,6 +46,12 @@ function App() {
   startLocationService(callBack, failCallBack);
 
 
+  let springApi = 'http://localhost:8080/api/v1/bus/busTest';
+  axiosUtil.get(springApi).then(data => {
+      console.log(data);
+  })
+
+
   // let [ postion , setPosition] = useState();
 
   // navigator.geolocation.watchPosition(()=>{

@@ -3,7 +3,7 @@ import { devConsole } from '../Util';
 
 let serviceRunning = false;
 
-static let isAutoSearch = true;
+let isAutoSearch = true;
 
 
 let serviceInterval = (callback)=>{
@@ -40,8 +40,6 @@ export function restoreLocationService(successFunc,errorFunc){
     },2000);
 }
 
-
-
 export function startLocationService(callBack, failCallBack) {
     if(serviceRunning === true){
         clearInterval(serviceInterval);
@@ -49,3 +47,12 @@ export function startLocationService(callBack, failCallBack) {
 
     restoreLocationService(callBack ,failCallBack);
 };
+
+
+export function autoSearchStop(){
+    isAutoSearch = false;
+}
+
+export function autoSearchStart(){
+    isAutoSearch = true;
+}

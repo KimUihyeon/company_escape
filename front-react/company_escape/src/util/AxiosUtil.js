@@ -14,7 +14,12 @@ function getUrl( param ){
 class AxiosUtil {
     
     get(url){
-        return axios.get(url);
+        return axios.get(url)
+                    .then((res)=>{
+                        return res.data.response.msgBody
+                    }).catch(err =>{
+                        return err;
+                    });
     }
 
     post(){
