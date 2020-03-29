@@ -1,6 +1,6 @@
 package com.company.escape.controllers;
 
-import com.company.escape.util.rest.BusRouteRequester;
+import com.company.escape.util.rest.PublicBusDataRequester;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class BusStopApiController {
 
     @Autowired
-    private BusRouteRequester busRouteRequester;
+    private PublicBusDataRequester publicBusDataRequester;
 
     @GetMapping("busTest")
     public String busTest(){
-        return this.busRouteRequester.getBusRouteInfo(233000031);
+        return this.publicBusDataRequester.getBusRouteInfo(233000031);
     }
 
 

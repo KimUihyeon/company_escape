@@ -14,13 +14,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class SerializeUtil {
 
-    public String XmlToJson(String xmlStr){
+    public String xmlToJson(String xmlStr){
         JSONObject jObject = XML.toJSONObject(xmlStr);
         return jObject.toString();
     }
 
 
-    public void XmlToObjectMapping(String xmlStr){
+    public void xmlToObjectMapping(String xmlStr){
         JSONObject jObject = new JSONObject(xmlStr);
         jObject.toString();
     }

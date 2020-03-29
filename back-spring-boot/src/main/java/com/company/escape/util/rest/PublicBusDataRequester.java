@@ -1,8 +1,6 @@
 package com.company.escape.util.rest;
 
 import com.company.escape.util.serialize.SerializeUtil;
-import org.json.JSONObject;
-import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -10,16 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 버스 노선정보를 가져오기 위한 객체.
@@ -29,10 +19,13 @@ import java.util.Map;
  */
 @Component
 @PropertySource("classpath:application-api.properties")
-public class BusRouteRequester {
+public class PublicBusDataRequester {
 
     @Value("${API_KEY}")
-    private String apiKey;
+    private String API_KEY;
+
+    @Value("${BUS_STOP_INFO_API_URL}")
+    private String BUSSTOP_INFO_API_URL;
 
     @Autowired
     private RestRequester restRequester;
@@ -47,8 +40,8 @@ public class BusRouteRequester {
 //
 //        try{
 //            StringBuilder urlBuilder = new StringBuilder(urlTemp); /*URL*/
-//            urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "="+apiKey); /*Service Key*/
-//            urlBuilder.append("&" + URLEncoder.encode("serviceKey","UTF-8") + "=" + URLEncoder.encode(apiKey, "UTF-8")); /*인증키(공공데이터포털 발급)*/
+//            urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "="+API_KEY); /*Service Key*/
+//            urlBuilder.append("&" + URLEncoder.encode("serviceKey","UTF-8") + "=" + URLEncoder.encode(API_KEY, "UTF-8")); /*인증키(공공데이터포털 발급)*/
 //            urlBuilder.append("&" + URLEncoder.encode("routeId","UTF-8") + "=" + URLEncoder.encode("233000031", "UTF-8")); /*노선 ID*/
 //
 //
@@ -56,8 +49,8 @@ public class BusRouteRequester {
 //
 //
 //            uri =UriComponentsBuilder.fromHttpUrl(urlTemp)
-//                    .queryParam(URLEncoder.encode("ServiceKey","UTF-8"), apiKey)
-//                    .queryParam(URLEncoder.encode("serviceKey","UTF-8"), URLEncoder.encode(apiKey, "UTF-8"))
+//                    .queryParam(URLEncoder.encode("ServiceKey","UTF-8"), API_KEY)
+//                    .queryParam(URLEncoder.encode("serviceKey","UTF-8"), URLEncoder.encode(API_KEY, "UTF-8"))
 //                    .queryParam(URLEncoder.encode("routeId", "UTF-8"), URLEncoder.encode(String.valueOf(routeId),"UTF-8"))
 //                    .build();
 //
@@ -98,7 +91,7 @@ public class BusRouteRequester {
 //
 //        try {
 //            uri =UriComponentsBuilder.fromHttpUrl(urlTemp)
-//                    .queryParam(URLEncoder.encode("serviceKey","UTF-8"), URLEncoder.encode(apiKey, "UTF-8"))
+//                    .queryParam(URLEncoder.encode("serviceKey","UTF-8"), URLEncoder.encode(API_KEY, "UTF-8"))
 //                    .queryParam(URLEncoder.encode("routeId", "UTF-8"), URLEncoder.encode(String.valueOf(routeId),"UTF-8"))
 //                    .build();
 //        }catch (Exception e){
@@ -109,35 +102,69 @@ public class BusRouteRequester {
 //        urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=서비스키"); /*Service Key*/
 //        urlBuilder.append("&" + URLEncoder.encode("serviceKey","UTF-8") + "=" + URLEncoder.encode("1234567890", "UTF-8")); /*인증키(공공데이터포털 발급)*/
 //        urlBuilder.append("&" + URLEncoder.encode("routeId","UTF-8") + "=" + URLEncoder.encode("233000031", "UTF-8")); /*노선 ID*/
-
-
     }
 
     /**
+     /**
      * 버스 해당 노선번호로 정보를 가지고옴
+     *
+     * @param routeId
+     * @return
      */
     public String getBusRouteInfo(int routeId) {
 
-        UriComponents uri = null;
+        String result = null;
+
         try {
 
             String urlTemp = "http://openapi.gbis.go.kr/ws/rest/buslocationservice";
-            uri = UriComponentsBuilder.fromHttpUrl(urlTemp)
-                    .queryParam("ServiceKey", apiKey)
-                    .queryParam("serviceKey", URLEncoder.encode(apiKey, "UTF-8"))
+            UriComponents uri = UriComponentsBuilder.fromHttpUrl(urlTemp)
+                    .queryParam("ServiceKey", API_KEY)
+                    .queryParam("serviceKey", URLEncoder.encode(API_KEY, "UTF-8"))
                     .queryParam("routeId", String.valueOf(routeId))
                     .build();
+
+            String xmlResponse = this.restRequester.requestRestFul(uri);
+            result = this.serializeUtil.xmlToJson((xmlResponse));
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } finally {
         }
+        System.out.println(result);
+        return result;
+    }
 
-        String xmlResponse = this.restRequester.requestRestFul(uri);
-        String jsonData = this.serializeUtil.XmlToJson((xmlResponse));
+    /**
+     * key word를 기반으로 정류장정보를 뽑아옴 ..!
+     * 관심 정류장을 찾기 위해 사용..!
+     *
+     * @param keyword 2글자 이상
+     * @return
+     */
+    public String getBusStopInfos(String keyword) {
 
-        System.out.println(jsonData);
-        return jsonData;
+        String result = null;
+
+
+        try {
+            UriComponents uri = UriComponentsBuilder.fromHttpUrl(BUSSTOP_INFO_API_URL)
+                    .queryParam("serviceKey", API_KEY)
+                    .queryParam("serviceKey", URLEncoder.encode(API_KEY,"UTF-8"))
+                    .queryParam("keyword", String.valueOf(keyword))
+                    .build(false);
+
+            String responseXML = this.restRequester.requestRestFul(uri);
+            result = this.serializeUtil.xmlToJson(responseXML);
+
+            System.out.println(result);
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+
+        return result;
     }
 
 
