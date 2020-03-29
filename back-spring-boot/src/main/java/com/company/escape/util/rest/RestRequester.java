@@ -96,6 +96,7 @@ public class RestRequester {
         try{
 
             URL url = new URL(uri.toUriString());
+            System.out.println("REST api request -> "+uri.toUriString());
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");

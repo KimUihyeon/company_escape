@@ -1,7 +1,6 @@
 package com.company.escape.util.rest;
 
 import com.company.escape.util.serialize.JsonUtil;
-import com.company.escape.util.serialize.SerializeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -55,24 +54,18 @@ public class PublicBusDataRequester {
         return new LinkedMultiValueMap(map);
     }
 
+    public boolean apiConnectionSuccess(UriComponents url){
+        String result = this.restRequester.requestRestFul(url);
+        return apiConnectionSuccess(result);
+    }
 
-    public boolean apiConnectionTest() {
-
+    public boolean apiConnectionSuccess(String jsonStr){
         try {
-            //api 샘플데이터
 
-            UriComponents url = UriComponentsBuilder.fromHttpUrl(BUS_LOCATION_API_URL)
-                    .queryParam("ServiceKey", API_KEY)
-                    .queryParam("serviceKey", URLEncoder.encode(API_KEY, "UTF-8"))
-                    .queryParam("routeId", String.valueOf(233000031))
-                    .build(false);
-
-            String result = this.restRequester.requestRestFul(url);
             String[] jsonMsgCodeKeys = {"response", "comMsgHeader", "returnCode"};
             int code = Integer.MIN_VALUE;
 
-            code = Integer.parseInt(this.jsonUtil.getJsonValue(result, jsonMsgCodeKeys));
-
+            code = Integer.parseInt(this.jsonUtil.getJsonValue(jsonStr, jsonMsgCodeKeys));
 
             String errorStr = null;
             switch (code) {
@@ -85,7 +78,7 @@ public class PublicBusDataRequester {
                 }
                 default: {
                     String[] jsonMsgKey = {"response", "comMsgHeader", "errMsg"};
-                    String errorMsg = this.jsonUtil.getJsonValue(result, jsonMsgKey);
+                    String errorMsg = this.jsonUtil.getJsonValue(jsonStr, jsonMsgKey);
                     errorStr = "api 호출에서 다음 코드가 발생하였습니다. returnCode ->" + code + "("+errorMsg+ ")";
                     break;
                 }
@@ -95,7 +88,31 @@ public class PublicBusDataRequester {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+
         }
+
+    }
+
+
+    public boolean apiConnectionTest() {
+        boolean isSuccess = false;
+
+        try {
+            //api 샘플데이터
+
+            UriComponents url = UriComponentsBuilder.fromHttpUrl(BUS_LOCATION_API_URL)
+                    .queryParam("ServiceKey", API_KEY)
+                    .queryParam("serviceKey", URLEncoder.encode(API_KEY, "UTF-8"))
+                    .queryParam("routeId", String.valueOf(233000031))
+                    .build(false);
+
+            isSuccess = apiConnectionSuccess(url);
+        }
+        catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+        }
+
+        return isSuccess;
     }
 
     // TODO : 이건 왜 안될까 .. Okky에 물어보자.

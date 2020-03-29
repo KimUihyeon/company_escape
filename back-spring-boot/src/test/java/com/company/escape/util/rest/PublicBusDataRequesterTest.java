@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author kuh
  * @since 2020.03.29
@@ -43,19 +46,26 @@ public class PublicBusDataRequesterTest {
     @Test
     public void testBusInfoData() {
         // given
+        Map<String, String> keywords = new HashMap<>();
+        keywords.put("정자역", "07624");
+        keywords.put("시흥영업소", "25847");
 
-        String interesteBusStopName = "";
-        String keyWord = "";
+        String findBusStopName = "시흥영업소";
 
         // when
-        String jsonData = this.publicBusDataRequester.getBusStopInfos(keyWord);
+        String jsonData = this.publicBusDataRequester.getBusStopInfos(keywords.get(findBusStopName));
 
-        JSONObject jobject = new JSONObject(jsonData);
-        Object searchedBusStopName = jobject.get("");
+        String[] keys = {"response", "msgBody", "busStationList", "mobileNo"};
+        String[] stationIdRoot = {"response", "msgBody", "busStationList", "stationId"};
+        String mobileNo = this.jsonUtil.getJsonValue(jsonData, keys);
+        String stationId = this.jsonUtil.getJsonValue(jsonData, stationIdRoot);
+
+        System.out.println("stationIdRoot ->" + stationId);
+
 
         // then
 
-        Assert.assertEquals(interesteBusStopName, searchedBusStopName.toString());
+        Assert.assertEquals(keywords.get(findBusStopName), mobileNo);
 
     }
 
