@@ -92,7 +92,7 @@ public class RestRequester {
      * @return
      */
     public String requestRestFul(UriComponents uri) {
-        String ResponceData = null;
+        String responceData = null;
         try{
 
             URL url = new URL(uri.toUriString());
@@ -112,13 +112,18 @@ public class RestRequester {
                     sb.append(line + System.lineSeparator());
                 }
 
-                ResponceData = sb.toString();
-                System.out.println(sb.toString());
+                responceData = sb.toString();
+
+                System.out.println("responce XML -> " + responceData);
+
+                responceData = this.serializeUtil.xmlToJson(responceData);
+                System.out.println("responce json -> " + responceData);
             }
         }catch (Exception e){
             System.out.println(e);
         }
-        return ResponceData;
+
+        return responceData;
     }
 
 

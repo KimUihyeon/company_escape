@@ -1,15 +1,20 @@
 package com.company.escape.util.rest;
 
+import com.company.escape.util.serialize.JsonUtil;
 import com.company.escape.util.serialize.SerializeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 버스 노선정보를 가져오기 위한 객체.
@@ -27,11 +32,71 @@ public class PublicBusDataRequester {
     @Value("${BUS_STOP_INFO_API_URL}")
     private String BUSSTOP_INFO_API_URL;
 
+    @Value("${BUS_LOCATION_API_URL}")
+    private String BUS_LOCATION_API_URL;
+
     @Autowired
     private RestRequester restRequester;
 
     @Autowired
-    private SerializeUtil serializeUtil;
+    private JsonUtil jsonUtil;
+
+
+    private MultiValueMap<String, String> defaultApiParams() {
+        Map<String, String> map = new HashMap<>();
+        map.put("ServiceKey", API_KEY);
+        try {
+            map.put("serviceKey", URLEncoder.encode(API_KEY, "UTF-8"));
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return new LinkedMultiValueMap(map);
+    }
+
+
+    public boolean apiConnectionTest() {
+
+        try {
+            //api 샘플데이터
+
+            UriComponents url = UriComponentsBuilder.fromHttpUrl(BUS_LOCATION_API_URL)
+                    .queryParam("ServiceKey", API_KEY)
+                    .queryParam("serviceKey", URLEncoder.encode(API_KEY, "UTF-8"))
+                    .queryParam("routeId", String.valueOf(233000031))
+                    .build(false);
+
+            String result = this.restRequester.requestRestFul(url);
+            String[] jsonMsgCodeKeys = {"response", "comMsgHeader", "returnCode"};
+            int code = Integer.MIN_VALUE;
+
+            code = Integer.parseInt(this.jsonUtil.getJsonValue(result, jsonMsgCodeKeys));
+
+
+            String errorStr = null;
+            switch (code) {
+                case 0: {
+                    return true;
+                }
+                case Integer.MIN_VALUE: {
+                    errorStr = "api 호출에서 다음 코드가 발생하였습니다. returnCode ->" + code;
+                    break;
+                }
+                default: {
+                    String[] jsonMsgKey = {"response", "comMsgHeader", "errMsg"};
+                    String errorMsg = this.jsonUtil.getJsonValue(result, jsonMsgKey);
+                    errorStr = "api 호출에서 다음 코드가 발생하였습니다. returnCode ->" + code + "("+errorMsg+ ")";
+                    break;
+                }
+            }
+
+            throw new IllegalAccessException(errorStr);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     // TODO : 이건 왜 안될까 .. Okky에 물어보자.
     private void test() {
@@ -105,7 +170,7 @@ public class PublicBusDataRequester {
     }
 
     /**
-     /**
+     * /**
      * 버스 해당 노선번호로 정보를 가지고옴
      *
      * @param routeId
@@ -117,15 +182,13 @@ public class PublicBusDataRequester {
 
         try {
 
-            String urlTemp = "http://openapi.gbis.go.kr/ws/rest/buslocationservice";
-            UriComponents uri = UriComponentsBuilder.fromHttpUrl(urlTemp)
+            UriComponents uri = UriComponentsBuilder.fromHttpUrl(BUS_LOCATION_API_URL)
                     .queryParam("ServiceKey", API_KEY)
                     .queryParam("serviceKey", URLEncoder.encode(API_KEY, "UTF-8"))
                     .queryParam("routeId", String.valueOf(routeId))
                     .build();
 
-            String xmlResponse = this.restRequester.requestRestFul(uri);
-            result = this.serializeUtil.xmlToJson((xmlResponse));
+            result = this.restRequester.requestRestFul(uri);
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -149,17 +212,16 @@ public class PublicBusDataRequester {
 
         try {
             UriComponents uri = UriComponentsBuilder.fromHttpUrl(BUSSTOP_INFO_API_URL)
-                    .queryParam("serviceKey", API_KEY)
-                    .queryParam("serviceKey", URLEncoder.encode(API_KEY,"UTF-8"))
+                    .queryParam("ServiceKey", API_KEY)
+                    .queryParam("serviceKey", URLEncoder.encode(API_KEY, "UTF-8"))
                     .queryParam("keyword", String.valueOf(keyword))
                     .build(false);
 
-            String responseXML = this.restRequester.requestRestFul(uri);
-            result = this.serializeUtil.xmlToJson(responseXML);
+            result = this.restRequester.requestRestFul(uri);
 
             System.out.println(result);
 
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

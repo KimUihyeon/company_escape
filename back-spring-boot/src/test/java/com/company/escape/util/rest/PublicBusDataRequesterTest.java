@@ -32,22 +32,9 @@ public class PublicBusDataRequesterTest {
     public void restConnectionTestFunction() {
 
         // given
-        int routeId = 233000031;
-
-        // when
-
-        String json = this.publicBusDataRequester.getBusRouteInfo(233000031);
-//
-//        JSONObject jObject = new JSONObject(json);
-//        JSONObject jobj2 = (JSONObject) jObject.get("response");
-//        JSONObject jobj3 = (JSONObject) jobj2.get("comMsgHeader");
-
-        String[] keys = {"response", "comMsgHeader", "returnCode"};
-
-        int key = Integer.parseInt(jsonUtil.getJsonValue(json, keys));
-
-        System.out.println(json);
-        Assert.assertNotNull(json);
+        boolean isConnection = this.publicBusDataRequester.apiConnectionTest();
+        System.out.println(isConnection);
+        Assert.assertTrue(isConnection);
         // then
 
     }
