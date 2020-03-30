@@ -40,6 +40,9 @@ public class PublicBusDataRequester {
     @Value("${IN_COMMING_BUS_ALL_ROUTE_API_URL}")
     private String IN_COMMING_BUS_ALL_ROUTE_API_URL;
 
+    @Value("${ROUTE_LIST_API_URL}")
+    private String ROUTE_LIST_API_URL;
+
 
     @Autowired
     private RestRequester restRequester;
@@ -58,6 +61,24 @@ public class PublicBusDataRequester {
         }
 
         return new LinkedMultiValueMap(map);
+    }
+
+
+    public String getRouteListByRouteName(String routeName){
+        try{
+
+            UriComponents uri = UriComponentsBuilder.fromHttpUrl(this.ROUTE_LIST_API_URL)
+                    .queryParam("ServiceKey", API_KEY)
+                    .queryParam("serviceKey", URLEncoder.encode(API_KEY, "UTF-8"))
+                    .queryParam("keyword", routeName)
+                    .build(false);
+
+            String responceJson = this.restRequester.requestRestFul(uri);
+            return responceJson ;
+        }catch (UnsupportedEncodingException e ){
+            e.printStackTrace();
+            return null;
+        }
     }
 
 

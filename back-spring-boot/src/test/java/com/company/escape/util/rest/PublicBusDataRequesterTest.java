@@ -28,6 +28,24 @@ public class PublicBusDataRequesterTest {
     private JsonUtil jsonUtil;
 
 
+    @Test
+    public void getRouteListByRouteNameTest() {
+
+        //given
+        String busName = "3200"; //92-1번 버스;
+        String[] keys = {"response", "msgBody", "busRouteList"};
+
+
+        //when
+        String responseJson = this.publicBusDataRequester.getRouteListByRouteName(busName);
+        String resultStr = this.jsonUtil.getJsonValue(responseJson, keys);
+
+
+        //then
+        System.out.println(resultStr);
+    }
+
+
     /**
      * 공공데이터 포털에서 제공한 테스트 샘플
      */
@@ -35,6 +53,7 @@ public class PublicBusDataRequesterTest {
     public void restConnectionTestFunction() {
 
         // given
+        // when
         boolean isConnection = this.publicBusDataRequester.apiConnectionTest();
         System.out.println(isConnection);
         Assert.assertTrue(isConnection);
@@ -78,8 +97,7 @@ public class PublicBusDataRequesterTest {
         String jsonData = this.publicBusDataRequester.getBusStopInfos(busStopSerialNumber);
 
         String[] stationIdKeys = {"response", "msgBody", "busStationList", "stationId"};
-        String busStopInfoJson = this.jsonUtil.getJsonValue(jsonData ,stationIdKeys );
-
+        String busStopInfoJson = this.jsonUtil.getJsonValue(jsonData, stationIdKeys);
 
 
 //        String[]
