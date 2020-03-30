@@ -66,7 +66,25 @@ public class PublicBusDataRequesterTest {
         // then
 
         Assert.assertEquals(keywords.get(findBusStopName), mobileNo);
+    }
 
+
+    @Test
+    public void testRouteInfo() {
+
+        //given
+
+        String busStopSerialNumber = "07624";
+        String jsonData = this.publicBusDataRequester.getBusStopInfos(busStopSerialNumber);
+
+        String[] stationIdKeys = {"response", "msgBody", "busStationList", "stationId"};
+        String busStopInfoJson = this.jsonUtil.getJsonValue(jsonData ,stationIdKeys );
+
+
+
+//        String[]
+
+        System.out.println(busStopInfoJson);
     }
 
 }

@@ -29,17 +29,23 @@ public class PublicBusDataRequester {
     private String API_KEY;
 
     @Value("${BUS_STOP_INFO_API_URL}")
-    private String BUSSTOP_INFO_API_URL;
+    private String BUS_STOP_INFO_API_URL;
 
-    @Value("${BUS_LOCATION_API_URL}")
-    private String BUS_LOCATION_API_URL;
+    @Value("${UP_STATION_JUNGJA_ID")
+    private String UP_STATION_JUNGJA_ID;
+
+    @Value("${UP_STATION_SIHUNG_ID}")
+    private String UP_STATION_SIHUNG_ID;
+
+    @Value("${IN_COMMING_BUS_ALL_ROUTE_API_URL}")
+    private String IN_COMMING_BUS_ALL_ROUTE_API_URL;
+
 
     @Autowired
     private RestRequester restRequester;
 
     @Autowired
     private JsonUtil jsonUtil;
-
 
     private MultiValueMap<String, String> defaultApiParams() {
         Map<String, String> map = new HashMap<>();
@@ -52,6 +58,26 @@ public class PublicBusDataRequester {
         }
 
         return new LinkedMultiValueMap(map);
+    }
+
+
+    public String getBusStationInRouts(String stationId){
+        try{
+
+            UriComponents uri = UriComponentsBuilder.fromHttpUrl(this.IN_COMMING_BUS_ALL_ROUTE_API_URL)
+                    .queryParam("ServiceKey", API_KEY)
+                    .queryParam("serviceKey", URLEncoder.encode(API_KEY, "UTF-8"))
+                    .queryParam("stationId", stationId)
+                    .build(false);
+
+            String responceJson = this.restRequester.requestRestFul(uri);
+//            String[] keys = {}
+
+        }catch (UnsupportedEncodingException e ){
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public boolean apiConnectionSuccess(UriComponents url){
@@ -93,14 +119,13 @@ public class PublicBusDataRequester {
 
     }
 
-
     public boolean apiConnectionTest() {
         boolean isSuccess = false;
 
         try {
             //api 샘플데이터
 
-            UriComponents url = UriComponentsBuilder.fromHttpUrl(BUS_LOCATION_API_URL)
+            UriComponents url = UriComponentsBuilder.fromHttpUrl(BUS_STOP_INFO_API_URL)
                     .queryParam("ServiceKey", API_KEY)
                     .queryParam("serviceKey", URLEncoder.encode(API_KEY, "UTF-8"))
                     .queryParam("routeId", String.valueOf(233000031))
@@ -115,76 +140,8 @@ public class PublicBusDataRequester {
         return isSuccess;
     }
 
-    // TODO : 이건 왜 안될까 .. Okky에 물어보자.
-    private void test() {
 
-//
-//
-//        try{
-//            StringBuilder urlBuilder = new StringBuilder(urlTemp); /*URL*/
-//            urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "="+API_KEY); /*Service Key*/
-//            urlBuilder.append("&" + URLEncoder.encode("serviceKey","UTF-8") + "=" + URLEncoder.encode(API_KEY, "UTF-8")); /*인증키(공공데이터포털 발급)*/
-//            urlBuilder.append("&" + URLEncoder.encode("routeId","UTF-8") + "=" + URLEncoder.encode("233000031", "UTF-8")); /*노선 ID*/
-//
-//
-//            String data1 = urlBuilder.toString();
-//
-//
-//            uri =UriComponentsBuilder.fromHttpUrl(urlTemp)
-//                    .queryParam(URLEncoder.encode("ServiceKey","UTF-8"), API_KEY)
-//                    .queryParam(URLEncoder.encode("serviceKey","UTF-8"), URLEncoder.encode(API_KEY, "UTF-8"))
-//                    .queryParam(URLEncoder.encode("routeId", "UTF-8"), URLEncoder.encode(String.valueOf(routeId),"UTF-8"))
-//                    .build();
-//
-//            String date2 =uri.toUriString();
-//
-//            URL url = new URL(date2);
-//
-//
-//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//
-//            conn.setRequestMethod("GET");
-//            conn.setRequestProperty("Content-type", "application/json");
-//
-//            System.out.println("Response code: " + conn.getResponseCode());
-//            BufferedReader rd;
-//            if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-//                rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//            } else {
-//                rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-//            }
-//            StringBuilder sb = new StringBuilder();
-//            String line;
-//            while ((line = rd.readLine()) != null) {
-//                sb.append(line);
-//            }
-//            rd.close();
-//            conn.disconnect();
-//            System.out.println(sb.toString());
-//        } catch (UnsupportedEncodingException e) {
-//            e.printStackTrace();
-//        } catch (ProtocolException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        Map<String, String> paramMap = new HashMap<>();
-//
-//        try {
-//            uri =UriComponentsBuilder.fromHttpUrl(urlTemp)
-//                    .queryParam(URLEncoder.encode("serviceKey","UTF-8"), URLEncoder.encode(API_KEY, "UTF-8"))
-//                    .queryParam(URLEncoder.encode("routeId", "UTF-8"), URLEncoder.encode(String.valueOf(routeId),"UTF-8"))
-//                    .build();
-//        }catch (Exception e){
-//
-//        }
-//
-//        StringBuilder urlBuilder = new StringBuilder("http://openapi.gbis.go.kr/ws/rest/buslocationservice"); /*URL*/
-//        urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=서비스키"); /*Service Key*/
-//        urlBuilder.append("&" + URLEncoder.encode("serviceKey","UTF-8") + "=" + URLEncoder.encode("1234567890", "UTF-8")); /*인증키(공공데이터포털 발급)*/
-//        urlBuilder.append("&" + URLEncoder.encode("routeId","UTF-8") + "=" + URLEncoder.encode("233000031", "UTF-8")); /*노선 ID*/
-    }
+
 
     /**
      * /**
@@ -199,7 +156,7 @@ public class PublicBusDataRequester {
 
         try {
 
-            UriComponents uri = UriComponentsBuilder.fromHttpUrl(BUS_LOCATION_API_URL)
+            UriComponents uri = UriComponentsBuilder.fromHttpUrl(BUS_STOP_INFO_API_URL)
                     .queryParam("ServiceKey", API_KEY)
                     .queryParam("serviceKey", URLEncoder.encode(API_KEY, "UTF-8"))
                     .queryParam("routeId", String.valueOf(routeId))
@@ -228,7 +185,7 @@ public class PublicBusDataRequester {
 
 
         try {
-            UriComponents uri = UriComponentsBuilder.fromHttpUrl(BUSSTOP_INFO_API_URL)
+            UriComponents uri = UriComponentsBuilder.fromHttpUrl(BUS_STOP_INFO_API_URL)
                     .queryParam("ServiceKey", API_KEY)
                     .queryParam("serviceKey", URLEncoder.encode(API_KEY, "UTF-8"))
                     .queryParam("keyword", String.valueOf(keyword))
