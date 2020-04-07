@@ -73,7 +73,7 @@ public class PublicBusDataRequester {
                     .queryParam("keyword", routeName)
                     .build(false);
 
-            String responceJson = this.restRequester.requestRestFul(uri);
+            String responceJson = this.restRequester.responseRestFul(uri);
             return responceJson ;
         }catch (UnsupportedEncodingException e ){
             e.printStackTrace();
@@ -91,7 +91,7 @@ public class PublicBusDataRequester {
                     .queryParam("stationId", stationId)
                     .build(false);
 
-            String responceJson = this.restRequester.requestRestFul(uri);
+            String responceJson = this.restRequester.responseRestFul(uri);
 //            String[] keys = {}
 
         }catch (UnsupportedEncodingException e ){
@@ -101,8 +101,9 @@ public class PublicBusDataRequester {
         return null;
     }
 
+
     public boolean apiConnectionSuccess(UriComponents url){
-        String result = this.restRequester.requestRestFul(url);
+        String result = this.restRequester.responseRestFul(url);
         return apiConnectionSuccess(result);
     }
 
@@ -162,8 +163,6 @@ public class PublicBusDataRequester {
     }
 
 
-
-
     /**
      * /**
      * 버스 해당 노선번호로 정보를 가지고옴
@@ -183,7 +182,7 @@ public class PublicBusDataRequester {
                     .queryParam("routeId", String.valueOf(routeId))
                     .build();
 
-            result = this.restRequester.requestRestFul(uri);
+            result = this.restRequester.responseRestFul(uri);
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -212,7 +211,7 @@ public class PublicBusDataRequester {
                     .queryParam("keyword", String.valueOf(keyword))
                     .build(false);
 
-            result = this.restRequester.requestRestFul(uri);
+            result = this.restRequester.responseRestFul(uri);
 
             System.out.println(result);
 

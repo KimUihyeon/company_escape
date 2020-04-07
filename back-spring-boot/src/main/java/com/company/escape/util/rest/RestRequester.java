@@ -1,5 +1,6 @@
 package com.company.escape.util.rest;
 
+import com.company.escape.util.serialize.JsonUtil;
 import com.company.escape.util.serialize.SerializeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,55 +36,8 @@ public class RestRequester {
     @Autowired
     private SerializeUtil serializeUtil;
 
-    /**
-     * URL 뒤에 붙는 쿼리스트링을 만들어
-     *
-     * @param paramMap
-     * @return
-     */
-    private String getQueryString(Map<String, String> paramMap) {
-        List<String> paramList = new ArrayList<>();
-        Iterator<String> iter = paramMap.keySet().iterator();
-
-        while (iter.hasNext()) {
-            String key = iter.next();
-            String data = paramMap.get(key);
-
-            paramList.add(key + "=" + data);
-        }
-
-        return "?" + String.join("&", paramList);
-    }
-
-    /**
-     * Url 과 쿼리스트링을 붙여서 URI로 만들어줌
-     *
-     * @param url
-     * @param paramMap
-     * @return
-     */
-    private String getUrl(String url, Map<String, String> paramMap) {
-        String listChar = String.valueOf(url.charAt(url.length() - 1));
-
-        if (("/".equals(listChar))) {
-            url = url.substring(0, url.length() - 1);
-        }
-
-        return url + getQueryString(paramMap);
-    }
-
-
-    public void requestRestFulOldCode(){
-
-//        String uri = getUrl(url, paramMap);
-
-//
-//        RestTemplate rest = new RestTemplate();
-//        HttpHeaders header = new HttpHeaders();
-//        header.setContentType(new MediaType("application","json"));
-//        return rest.exchange(uri.toUriString(), HttpMethod.GET,new HttpEntity<>(header), String.class);
-
-    }
+    @Autowired
+    private JsonUtil jsonUtil;
 
     /**
      * 실제 REST API를 요청함..
@@ -91,7 +45,7 @@ public class RestRequester {
      * @param uri
      * @return
      */
-    public String requestRestFul(UriComponents uri) {
+    public String responseRestFul(UriComponents uri) {
         String responceData = null;
         try{
 
@@ -119,6 +73,9 @@ public class RestRequester {
 
                 responceData = this.serializeUtil.xmlToJson(responceData);
                 System.out.println("responce json -> " + responceData);
+            }
+            else {
+
             }
         }catch (Exception e){
             System.out.println(e);
